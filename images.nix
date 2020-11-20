@@ -21,8 +21,6 @@ let
         lib.nameValuePair system (extract (func pkgs) pattern)
       )
       archs);
-in
-rec {
   images = {
     amazon = mkImage "*.vhd" [ "x86_64-linux" ] (pkgs: (pkgs.nixos {
       imports = [
@@ -37,20 +35,56 @@ rec {
     }).openstackImage);
   };
 
-  build =
-    let
-      attributes = lib.flatten
-        (map
-          (imageName: map
-            (arch:
-              lib.nameValuePair "${imageName}-${arch}" images.${imageName}.${arch})
-            (builtins.attrNames images.${imageName}))
-          (builtins.attrNames images));
-    in
-    buildPkgs.runCommand "build-images" { } ''
-      mkdir $out
-      ${lib.concatMapStringsSep "\n"
-        (target: "ln -s ${target.value} $out/${target.name}")
-      attributes}
-    '';
+  attributes = lib.flatten
+    (map
+      (imageName: map
+        (arch:
+          lib.nameValuePair "${imageName}-${arch}" images.${imageName}.${arch})
+        (builtins.attrNames images.${imageName}))
+      (builtins.attrNames images));
+
+in
+rec {
+  inherit images;
+
+  build = buildPkgs.runCommand "build-images"
+    {
+      outputs = [ "out" "listing" ];
+    } ''
+    mkdir $out
+    ${lib.concatMapStringsSep "\n"
+      (target: "ln -s ${target.value} $out/${target.name}")
+    attributes}
+    cd $out && find -L . -type f | sed -e "s;^\./;;" > $listing
+  '';
+
+  site = buildPkgs.runCommand "site"
+    {
+      buildInputs = [ buildPkgs.pandoc ];
+
+      markdownDocument = buildPkgs.substituteAll {
+        name = "markdown";
+        src = ./index.md;
+        nixpkgsRevision = nixpkgs.rev;
+        imagesMarkdown = lib.concatMapStringsSep "\n"
+          (file:
+            ''
+              - [${file}](images/${file})
+            ''
+          )
+          (builtins.filter (x: x != [ ] && x != "") (builtins.split "\n" (builtins.readFile build.listing)));
+      };
+    } ''
+    mkdir $out
+    pandoc -f markdown -t html -o $out/index.html $markdownDocument
+    ln -s ${build} $out/images
+  '';
+
+  shell = buildPkgs.mkShell {
+    buildInputs = [
+      buildPkgs.netlify-cli
+      buildPkgs.nix
+      buildPkgs.bash
+    ];
+  };
 }
