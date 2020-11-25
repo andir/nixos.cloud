@@ -1,4 +1,16 @@
 {
+    "nixos-generators": {
+        "branch": "master",
+        "description": "Collection of image builders [maintainer=@Lassulus]",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "nixos-generators",
+        "rev": "450f39121c45b93951c52874fe233455d007d3bc",
+        "sha256": "1iwc39hzvzzyndxwbnl3fck7phxnjpnhy8zn4nyp8is1fiw0648v",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/nixos-generators/archive/450f39121c45b93951c52874fe233455d007d3bc.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "nixpkgs": {
         "branch": "nixos-unstable",
         "description": "Nix Packages collection",

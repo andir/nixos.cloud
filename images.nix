@@ -16,13 +16,19 @@ let
     lib.listToAttrs (map
       (system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              (self: super: {
+              })
+            ];
+          };
         in
-        lib.nameValuePair system (extract (func pkgs) pattern)
+        lib.nameValuePair system (if pattern != null then extract (func pkgs) pattern else func pkgs)
       )
       archs);
   images = {
-    amazon = mkImage "*.vhd" [ "x86_64-linux" ] (pkgs: (pkgs.nixos {
+    amazon = mkImage "*.vhd" [ "x86_64-linux" "aarch64-linux" ] (pkgs: (pkgs.nixos {
       imports = [
         (pkgs.path + "/nixos/maintainers/scripts/ec2/amazon-image.nix")
       ];
@@ -33,6 +39,19 @@ let
         (pkgs.path + "/nixos/maintainers/scripts/openstack/openstack-image.nix")
       ];
     }).openstackImage);
+
+    kexec = mkImage null [ "x86_64-linux" ] (pkgs: let
+      b = pkgs.callPackage (sources.nixos-generators + "/nixos-generate.nix") {
+        nixpkgs = pkgs.path;
+        inherit (pkgs) system;
+        configuration = {
+          imports = [
+            # FIXME: add cloud-init metadata fetcher?
+          ];
+        };
+        formatConfig = import (sources.nixos-generators + "/formats/kexec-bundle.nix");
+      };
+    in b.config.system.build.kexec_bundle);
   };
 
   attributes = lib.flatten
