@@ -8,7 +8,7 @@ cd "$BASEDIR"
 
 nix-build $BASEDIR/images.nix -A site
 
-test -d dist || rm -rf dist
+test -d dist && rm -rf dist
 cp -rvL result dist
 chmod +rw -R dist
 
