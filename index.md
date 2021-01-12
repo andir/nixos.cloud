@@ -1,6 +1,6 @@
 # NixOS Cloud Images
 
-These images have ben built from [commit @nixpkgsRevision@](https://github.com/nixos/nixpkgs/tree/@nixpkgsRevision@).
+These images were built from [commit @nixpkgsRevision@](https://github.com/nixos/nixpkgs/tree/@nixpkgsRevision@).
 
 ## Images
 
