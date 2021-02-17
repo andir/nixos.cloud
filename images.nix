@@ -101,7 +101,6 @@ rec {
 
   shell = buildPkgs.mkShell {
     buildInputs = [
-      buildPkgs.netlify-cli
       buildPkgs.nix
       buildPkgs.bash
     ];
