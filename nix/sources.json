@@ -5,10 +5,10 @@
         "homepage": "",
         "owner": "nix-community",
         "repo": "nixos-generators",
-        "rev": "537b572d3ab1549b26801ba2d5fc023fab963747",
-        "sha256": "16c8v5rjrg59c7x15mpbqb2d133rw2fjdg1kn6wxkj36rl67a249",
+        "rev": "974cd913e5aeead707fb0af8911a61003421fc4b",
+        "sha256": "0n63hd7vm0vax0rqxnhy047j74qzrcdnsq4waqlhg7c041ls0sig",
         "type": "tarball",
-        "url": "https://github.com/nix-community/nixos-generators/archive/537b572d3ab1549b26801ba2d5fc023fab963747.tar.gz",
+        "url": "https://github.com/nix-community/nixos-generators/archive/974cd913e5aeead707fb0af8911a61003421fc4b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
